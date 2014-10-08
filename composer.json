@@ -1,0 +1,26 @@
+{
+    "name": "chajr/class-benchmark",
+    "type": "library",
+    "license": "Apache-2.0",
+    "description": "Class Benchmark libraries",
+    "keywords": ["benchmark", "tracer", "debugger", "class library"],
+    "homepage": "https://github.com/chajr/class-benchmark",
+    "version": "0.1.0",
+    "authors": [
+        {
+            "name": "Michał Adamiak",
+            "email": "chajr@bluetree.pl",
+            "homepage": "https://github.com/chajr",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "chajr/class-kernel": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "ClassKernel\\": "src/"
+        }
+    }
+}
