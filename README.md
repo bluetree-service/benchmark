@@ -1,6 +1,6 @@
 ClassBenchmark
 ============
-
+Allow to check script performance and give some tools to debug script.
 
 
 ### Included libraries
@@ -8,6 +8,9 @@ ClassBenchmark
 
 Documentation
 --------------
+* [ClassBenchmark\Performance\Benchmark](https://github.com/chajr/class-benchmark/wiki/ClassBenchmark%5CPerformance%5CBenchmark)
+* [ClassBenchmark\Debug\Tracer](https://github.com/chajr/class-benchmark/wiki/ClassBenchmark%5CDebug%5CTracer)
+* [ClassBenchmark\Debug\Debugger]()
 
 
 Install via Composer
