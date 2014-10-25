@@ -16,7 +16,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "chajr/class-kernel": "dev-master"
+        "chajr/class-kernel": "dev-master",
+        "zendframework/zend-debug": "2.*",
+        "maximebf/debugbar": "1.*"
     },
     "autoload": {
         "psr-4": {
