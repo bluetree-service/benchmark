@@ -1,0 +1,10 @@
+div.phpdebugbar {
+    background: #000;
+    color: #bbb;
+}
+div.phpdebugbar-header {
+    background: #1b1b1b;
+}
+div.phpdebugbar-header > div > * {
+    color: #999;
+}

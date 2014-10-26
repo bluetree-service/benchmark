@@ -29,5 +29,6 @@
             margin-bottom: 10px;
         }
     </style>
+    <?php if(isset($debugBarHead)) {echo $debugBarHead;} ?>
 </head>
 <body>
