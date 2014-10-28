@@ -30,5 +30,6 @@
         }
     </style>
     <?php if(isset($debugBarHead)) {echo $debugBarHead;} ?>
+    <link rel="stylesheet" type="text/css" href="../src/Debug/Assets/dark.css">
 </head>
 <body>
