@@ -40,3 +40,29 @@ div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar{
 div.phpdebugbar-closed, div.phpdebugbar-minimized{
     border-top: 1px solid #777;
 }
+ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item{
+    border-bottom: 1px solid #777;
+}
+ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover{
+    background-color: #444;
+}
+.phpdebugbar-widgets-success{
+    color: #279328;
+}
+.phpdebugbar-widgets-info{
+    color: #326c93;
+}
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success:before{
+    color: #279328;
+    content: "\f164";
+    font-family: FontAwesome;
+    font-size: 11px;
+    margin-right: 8px;
+}
+div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-info:before{
+    color: #326c93;
+    content: "\f05a";
+    font-family: FontAwesome;
+    font-size: 11px;
+    margin-right: 8px;
+}

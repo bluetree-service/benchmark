@@ -4,10 +4,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use ClassKernel\Base\Register;
 use ClassBenchmark\Debug\DebugBar;
 
-DebugBar::$assetsUrl ='../vendor/maximebf/debugbar/src/DebugBar/Resources';
-/** @var ClassBenchmark\Debug\DebugBar $debugBar */
-$debugBar       = Register::getObject('ClassBenchmark\Debug\DebugBar');
-$debugBarHead   = $debugBar->renderHead();
+Register::getObject(
+    'ClassBenchmark\Debug\DebugBar',
+    ['../vendor/maximebf/debugbar/src/DebugBar/Resources']
+);
+$debugBarHead   = DebugBar::renderHead();
 
 require_once __DIR__ . '/header.php';
 
@@ -20,5 +21,6 @@ require_once __DIR__ . '/header.php';
         </div>
     </div>
 <?php
-echo $debugBar->render();
+DebugBar::addInfo('test message');
+echo DebugBar::render();
 require_once __DIR__ . '/footer.php';

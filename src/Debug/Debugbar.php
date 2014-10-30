@@ -17,44 +17,46 @@ use ClassKernel\Base\Register;
 class DebugBar
 {
     /**
+     * collector codes
+     */
+    const MESSAGES  = 'messages';
+    const TIME      = 'time';
+
+    /**
      * @var StandardDebugBar
      */
-    protected $_debugBar;
+    protected static $_debugBar;
 
     /**
      * @var \DebugBar\JavascriptRenderer
      */
-    protected $_debugBarRenderer;
-
-    /**
-     * allow to dynamic replace debugbar assets file directory
-     * 
-     * @var string
-     */
-    public static $assetsUrl = '';
+    protected static $_debugBarRenderer;
 
     /**
      * create debugbar instance
      * 
-     * @param string|null $assetsUrl
+     * @param array $options
      */
-    public function __construct($assetsUrl = null)
+    public function __construct(array $options)
     {
-        if (isset($assetsUrl)) {
-            self::$assetsUrl = $assetsUrl;
-        }
-
-        $this->_debugBar            = Register::getSingleton('DebugBar\StandardDebugBar');
-        $this->_debugBarRenderer    = $this->_debugBar
+        self::$_debugBar            = Register::getSingleton('DebugBar\StandardDebugBar');
+        self::$_debugBarRenderer    = self::$_debugBar
             ->getJavascriptRenderer()
-            ->setBaseUrl(self::$assetsUrl)
+            ->setBaseUrl($options[0])
             ->setEnableJqueryNoConflict(false);
     }
 
+    /**
+     * allow to set extended assets
+     * 
+     * @return $this
+     */
     protected function _addExtendedAssets()
     {
         $cssFiles = '';
-        $this->_debugBarRenderer->addAssets($cssFiles, null);
+        self::$_debugBarRenderer->addAssets($cssFiles, null);
+
+        return $this;
     }
 
     /**
@@ -62,9 +64,9 @@ class DebugBar
      * 
      * @return string
      */
-    public function renderHead()
+    public static function renderHead()
     {
-        return $this->_debugBarRenderer->renderHead();
+        return self::$_debugBarRenderer->renderHead();
     }
 
     /**
@@ -72,9 +74,9 @@ class DebugBar
      * 
      * @return string
      */
-    public function render()
+    public static function render()
     {
-        return $this->_debugBarRenderer->render();
+        return self::$_debugBarRenderer->render();
     }
 
     /**
@@ -93,7 +95,7 @@ class DebugBar
         }
 
         if (class_exists($name)) {
-            $this->_debugBar->addCollector(
+            self::$_debugBar->addCollector(
                 Register::getObject($name)
             );
         }
@@ -102,18 +104,97 @@ class DebugBar
     }
 
     /**
-     * allow to quick access to data collector using method
+     * allow to quick access to data collector using static method
      * 
      * @param string $collectorId
      * @param mixed $args
      * @return \DebugBar\DataCollector\DataCollectorInterface|null
      */
-    public function __call($collectorId, $args)
+    public static function __callStatic($collectorId, $args)
     {
-        if (isset($this->_debugBar[$collectorId])) {
-            return $this->_debugBar[$collectorId];
+        if (isset(self::$_debugBar[$collectorId])) {
+            return self::$_debugBar[$collectorId];
         }
 
         return null;
+    }
+
+    /**
+     * set info message
+     * 
+     * @param mixed $message
+     * @param bool $isString
+     */
+    public static function addInfo($message, $isString = false)
+    {
+        self::_addMessage($message, 'info', $isString);
+    }
+
+    /**
+     * set warning message
+     * 
+     * @param mixed $message
+     * @param bool $isString
+     */
+    public static function addWarning($message, $isString = false)
+    {
+        self::_addMessage($message, 'warning', $isString);
+    }
+
+    /**
+     * set error message
+     * 
+     * @param mixed $message
+     * @param bool $isString
+     */
+    public static function addError($message, $isString = false)
+    {
+        self::_addMessage($message, 'error', $isString);
+    }
+
+    /**
+     * set success message
+     * 
+     * @param mixed $message
+     * @param bool $isString
+     */
+    public static function addSuccess($message, $isString = false)
+    {
+        self::_addMessage($message, 'success', $isString);
+    }
+
+    /**
+     * common method to add message
+     * 
+     * @param mixed $message
+     * @param string $label
+     * @param bool $isString
+     */
+    protected static function _addMessage($message, $label, $isString)
+    {
+        /** @var \DebugBar\DataCollector\MessagesCollector $messageCollector */
+        $messageCollector = self::$_debugBar[self::MESSAGES];
+        $messageCollector->addMessage($message, $label, $isString);
+    }
+
+    public static function startMeasure($code, $description)
+    {
+        
+    }
+
+    public function stopMeasure($code)
+    {
+        
+    }
+
+    public static function measure($message, $closure)
+    {
+        
+    }
+
+    protected static function _measure()
+    {
+        /** @var \DebugBar\DataCollector\TimeDataCollector $timeCollector */
+        $timeCollector = self::$_debugBar[self::TIME];
     }
 }
