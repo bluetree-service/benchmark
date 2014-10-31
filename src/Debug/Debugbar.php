@@ -177,24 +177,46 @@ class DebugBar
         $messageCollector->addMessage($message, $label, $isString);
     }
 
+    /**
+     * Starts a measure
+     * 
+     * @param string $code
+     * @param string $description
+     */
     public static function startMeasure($code, $description)
     {
-        
+        self::_measure()->startMeasure($code, $description);
     }
 
-    public function stopMeasure($code)
+    /**
+     * Stops a measure
+     * 
+     * @param string $code
+     * @throws \DebugBar\DebugBarException
+     */
+    public static function stopMeasure($code)
     {
-        
+        self::_measure()->stopMeasure($code);
     }
 
-    public static function measure($message, $closure)
+    /**
+     * measure the execution of a Closure
+     * 
+     * @param string $message
+     * @param \Closure $closure
+     */
+    public static function measure($message, \Closure $closure)
     {
-        
+        self::_measure()->measure($message, $closure);
     }
 
+    /**
+     * return TimeDataCollector instance
+     * 
+     * @return \DebugBar\DataCollector\TimeDataCollector
+     */
     protected static function _measure()
     {
-        /** @var \DebugBar\DataCollector\TimeDataCollector $timeCollector */
-        $timeCollector = self::$_debugBar[self::TIME];
+        return self::$_debugBar[self::TIME];
     }
 }
