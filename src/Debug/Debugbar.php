@@ -3,16 +3,18 @@
  * extends debugbar functionality
  *
  * @package     ClassBenchmark
- * @subpackage  Performance
+ * @subpackage  Debug
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
- * @link https://github.com/chajr/class-benchmark/wiki/ClassBenchmark%5CPerformance%5CBenchmark
+ * @link https://github.com/chajr/class-benchmark/wiki/
  */
 
 namespace ClassBenchmark\Debug;
 
-use DebugBar\StandardDebugBar;
 use ClassKernel\Base\Register;
+use DebugBar\DataCollector\DataCollectorInterface;
+use Zend\Debug\Debug;
+use Exception;
 
 class DebugBar
 {
@@ -21,9 +23,10 @@ class DebugBar
      */
     const MESSAGES  = 'messages';
     const TIME      = 'time';
+    const EXCEPTION = 'exception';
 
     /**
-     * @var StandardDebugBar
+     * @var Debugger
      */
     protected static $_debugBar;
 
@@ -39,7 +42,7 @@ class DebugBar
      */
     public function __construct(array $options)
     {
-        self::$_debugBar            = Register::getSingleton('DebugBar\StandardDebugBar');
+        self::$_debugBar            = Register::getSingleton('ClassBenchmark\Debug\Debugger');
         self::$_debugBarRenderer    = self::$_debugBar
             ->getJavascriptRenderer()
             ->setBaseUrl($options[0])
@@ -81,23 +84,27 @@ class DebugBar
 
     /**
      * set collector by given name
+     * name can be an instance of lunched data collector object
      * 
-     * @param $name
+     * @param string|DataCollectorInterface $name
      * @param bool $fullName
      * @return $this
      * @throws \DebugBar\DebugBarException
      */
     public function setCollector($name, $fullName = false)
     {
+        if ($name instanceof DataCollectorInterface) {
+            self::$_debugBar->addCollector($name);
+            return $this;
+        }
+
         $name = ucfirst($name);
         if (!$fullName) {
             $name = 'ClassBenchmark\Debug\Collectors\\' . $name;
         }
 
         if (class_exists($name)) {
-            self::$_debugBar->addCollector(
-                Register::getObject($name)
-            );
+            self::$_debugBar->addCollector(Register::getObject($name));
         }
 
         return $this;
@@ -218,5 +225,38 @@ class DebugBar
     protected static function _measure()
     {
         return self::$_debugBar[self::TIME];
+    }
+
+    /**
+     * handle Zend\Debug::dump() function
+     * 
+     * @param mixed $data
+     * @param string|null $label
+     * @param bool $display
+     * @return string|null
+     */
+    public static function dump($data, $label = null, $display = true)
+    {
+        $dump = Debug::dump($data, $label, $display);
+
+        if (!$display) {
+            $dump = preg_replace('#(^<pre>)|(</pre>$)#m', '', $dump);
+            self::addInfo(html_entity_decode($dump));
+            return null;
+        }
+
+        return $dump;
+    }
+
+    /**
+     * Adds an exception to be profiled in the debug bar
+     * 
+     * @param Exception $exception
+     */
+    public function addException(Exception $exception)
+    {
+        /** @var \DebugBar\DataCollector\ExceptionsCollector $exceptionCollector */
+        $exceptionCollector = self::$_debugBar[self::EXCEPTION];
+        $exceptionCollector->addException($exception);
     }
 }

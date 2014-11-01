@@ -2,6 +2,7 @@ div.phpdebugbar {
     background: #0b0b0b;
     color: #aaa;
 }
+a.phpdebugbar-tab span.phpdebugbar-badge,
 div.phpdebugbar-header {
     background: #1b1b1b;
 }
@@ -11,15 +12,10 @@ div.phpdebugbar-header > div > * {
 dl.phpdebugbar-widgets-kvlist dt, dl.phpdebugbar-widgets-kvlist dd{
     border-top: 1px solid #444;
 }
+div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter,
 a.phpdebugbar-tab.phpdebugbar-active{
-    background: #aaa;
     color: #eee;
-    background-image: linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
-    background-image: -o-linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
-    background-image: -moz-linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
-    background-image: -webkit-linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
-    background-image: -ms-linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.41, rgb(47, 47, 47)), color-stop(0.71, rgb(105, 105, 105)));
+    background: #0d6cab;
 }
 span.phpdebugbar-indicator,
 a.phpdebugbar-indicator,
@@ -35,6 +31,9 @@ div.phpdebugbar-closed, div.phpdebugbar-minimized,
 div.phpdebugbar-body{
     border-top: 1px solid #777;
 }
+ul.phpdebugbar-widgets-timeline .phpdebugbar-widgets-measure{
+    border-bottom: none;
+}
 ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item,
 ul.phpdebugbar-widgets-timeline li,
 div.phpdebugbar-resize-handle{
@@ -48,7 +47,7 @@ ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover{
     color: #279328;
 }
 .phpdebugbar-widgets-info{
-    color: #326c93;
+    color: #0d92d3;
 }
 div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success:before{
     color: #279328;
@@ -58,12 +57,29 @@ div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugb
     margin-right: 8px;
 }
 div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-info:before{
-    color: #326c93;
+    color: #0d92d3;
     content: "\f05a";
     font-family: FontAwesome;
     font-size: 11px;
     margin-right: 8px;
 }
+a.phpdebugbar-tab span.phpdebugbar-badge,
 ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label{
     color: #aaa;
+}
+.hljs-keyword,
+.css .rule .hljs-keyword,
+.hljs-winutils,
+.javascript .hljs-title,
+.nginx .hljs-title,
+.hljs-subst,
+.hljs-request,
+.hljs-status,
+.hljs{
+    color: #666;
+}
+a.phpdebugbar-tab span.phpdebugbar-badge{
+    border: 1px solid #aaa;
+    padding: 2px 6px;
+    border-radius: 6px;
 }
