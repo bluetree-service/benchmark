@@ -11,9 +11,6 @@ div.phpdebugbar-header > div > * {
 dl.phpdebugbar-widgets-kvlist dt, dl.phpdebugbar-widgets-kvlist dd{
     border-top: 1px solid #444;
 }
-div.phpdebugbar-body{
-    border-top: 1px solid #777;
-}
 a.phpdebugbar-tab.phpdebugbar-active{
     background: #aaa;
     color: #eee;
@@ -23,9 +20,6 @@ a.phpdebugbar-tab.phpdebugbar-active{
     background-image: -webkit-linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
     background-image: -ms-linear-gradient(bottom, rgb(47, 47, 47) 41%, rgb(105, 105, 105) 71%);
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.41, rgb(47, 47, 47)), color-stop(0.71, rgb(105, 105, 105)));
-}
-div.phpdebugbar-resize-handle{
-    border-bottom: 1px solid #777;
 }
 span.phpdebugbar-indicator,
 a.phpdebugbar-indicator,
@@ -37,14 +31,18 @@ div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar{
     background-color: #333;
     color: #aaa;
 }
-div.phpdebugbar-closed, div.phpdebugbar-minimized{
+div.phpdebugbar-closed, div.phpdebugbar-minimized,
+div.phpdebugbar-body{
     border-top: 1px solid #777;
 }
-ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item{
+ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item,
+ul.phpdebugbar-widgets-timeline li,
+div.phpdebugbar-resize-handle{
     border-bottom: 1px solid #777;
 }
+ul.phpdebugbar-widgets-timeline li:hover,
 ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover{
-    background-color: #444;
+    background-color: #282828;
 }
 .phpdebugbar-widgets-success{
     color: #279328;
@@ -65,4 +63,7 @@ div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugb
     font-family: FontAwesome;
     font-size: 11px;
     margin-right: 8px;
+}
+ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label{
+    color: #aaa;
 }
