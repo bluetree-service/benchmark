@@ -21,9 +21,11 @@ class DebugBar
     /**
      * collector codes
      */
-    const MESSAGES  = 'messages';
-    const TIME      = 'time';
-    const EXCEPTION = 'exception';
+    const MESSAGES              = 'messages';
+    const TIME                  = 'time';
+    const EXCEPTION             = 'exception';
+    const MAIN_ASSETS           = 'main_assets';
+    const ADDITIONAL_ASSETS     = 'additional_assets';
 
     /**
      * @var Debugger
@@ -36,6 +38,14 @@ class DebugBar
     protected static $_debugBarRenderer;
 
     /**
+     * list of path to additional assets
+     * asset_code_name => asset/path
+     * 
+     * @var string
+     */
+    protected static $_additionalAssetsPath = [];
+
+    /**
      * create debugbar instance
      * 
      * @param array $options
@@ -45,8 +55,38 @@ class DebugBar
         self::$_debugBar            = Register::getSingleton('ClassBenchmark\Debug\Debugger');
         self::$_debugBarRenderer    = self::$_debugBar
             ->getJavascriptRenderer()
-            ->setBaseUrl($options[0])
+            ->setBaseUrl($options[self::MAIN_ASSETS])
             ->setEnableJqueryNoConflict(false);
+
+        if (isset($options[self::ADDITIONAL_ASSETS])) {
+            self::$_additionalAssetsPath = $options[self::ADDITIONAL_ASSETS];
+        }
+    }
+
+    /**
+     * return path for additional assets
+     * 
+     * @param string|null $name
+     * @return string
+     */
+    public static function getAdditionalPath($name = null)
+    {
+        if ($name && isset(self::$_additionalAssetsPath[$name])) {
+            return self::$_additionalAssetsPath[$name];
+        }
+
+        return self::$_additionalAssetsPath;
+    }
+
+    /**
+     * set asset path for given data collector key
+     * 
+     * @param string $name
+     * @param string $path
+     */
+    public static function setAdditionalAssets($name, $path)
+    {
+        self::$_additionalAssetsPath[$name] = $path;
     }
 
     /**

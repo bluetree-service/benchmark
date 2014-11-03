@@ -6,7 +6,10 @@ use ClassBenchmark\Debug\DebugBar;
 
 Register::getObject(
     'ClassBenchmark\Debug\DebugBar',
-    ['../vendor/maximebf/debugbar/src/DebugBar/Resources']
+    [
+        DebugBar::MAIN_ASSETS       => '../vendor/maximebf/debugbar/src/DebugBar/Resources',
+        DebugBar::ADDITIONAL_ASSETS => '../src/Debug/Assets',
+    ]
 );
 $debugBarHead   = DebugBar::renderHead();
 

@@ -17,6 +17,7 @@ use ClassBenchmark\Debug\Collectors\TimeCollector;
 use DebugBar\DataCollector\RequestDataCollector;
 use DebugBar\DataCollector\MemoryCollector;
 use DebugBar\DataCollector\ExceptionsCollector;
+use ClassBenchmark\Debug\Collectors\RegisterCollector;
 use DebugBar\DebugBar as Debug;
 
 class Debugger extends Debug
@@ -34,5 +35,6 @@ class Debugger extends Debug
         $this->addCollector(new TimeCollector());
         $this->addCollector(new MemoryCollector());
         $this->addCollector(new ExceptionsCollector());
+        $this->addCollector(new RegisterCollector());
     }
 }
