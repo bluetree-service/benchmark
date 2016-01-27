@@ -76,7 +76,7 @@ class Timer
     public static function start($enabled = true)
     {
         if ($enabled) {
-            $time                           = microtime(true);
+            $time                          = microtime(true);
             self::$sessionMemoryStart      = memory_get_usage();
             self::$sessionBenchmarkStart   = $time;
             self::$sessionBenchmarkMarker  = $time;
@@ -95,17 +95,21 @@ class Timer
         if (self::$sessionBenchmarkOn) {
             $markerTime = microtime(true) - self::$sessionBenchmarkMarker;
             $markerColor = false;
+
             if (!empty(self::$groupOn)) {
                 $markerColor = self::$backgroundColor;
+
                 foreach (array_keys(self::$group) as $marker) {
                     if (!isset(self::$group[$marker]['time'])) {
                         $groupMarkerTime = $markerTime;
                     } else {
                         $groupMarkerTime = self::$group[$marker]['time'] + $markerTime;
                     }
+
                     self::$group[$marker]['time'] = $groupMarkerTime;
                 }
             }
+
             self::$sessionBenchmarkMarker    = microtime(true);
             self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $name,
@@ -125,12 +129,14 @@ class Timer
     {
         if (self::$sessionBenchmarkOn) {
             self::$backgroundColor += 0x101010;
+
             self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $groupName . ' START',
                 'marker_time'       => '',
                 'marker_memory'     => '',
                 'marker_color'      => self::$backgroundColor
             );
+
             self::$group[$groupName]['memory'] = memory_get_usage();
             self::$groupOn[$groupName]         = $groupName;
         }
@@ -150,12 +156,14 @@ class Timer
         if (self::$sessionBenchmarkOn) {
             unset(self::$groupOn[$groupName]);
             $memoryUsage = memory_get_usage() - self::$group[$groupName]['memory'];
+
             self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $groupName . ' END',
                 'marker_time'       => self::$group[$groupName]['time'],
                 'marker_memory'     => $memoryUsage,
                 'marker_color'      => self::$backgroundColor
             );
+
             self::$backgroundColor -= 0x101010;
         }
     }
@@ -176,6 +184,7 @@ class Timer
     public static function calculateStats()
     {
         $display = '';
+
         if (self::$sessionBenchmarkOn) {
             $display = '<div style="
             color: #FFFFFF;
@@ -185,6 +194,7 @@ class Timer
             text-align: center;
             margin: 25px auto;
             ">';
+
             $benchmarkStartTime = self::$sessionBenchmarkStart;
             $benchmarkEndTime   = self::$sessionBenchmarkFinish;
             $total              = ($benchmarkEndTime - $benchmarkStartTime) *1000;
@@ -195,12 +205,14 @@ class Timer
                 Total memory usage: '. number_format($memoryUsage, 3, ',', '')
                 . ' kB<br /><br />';
             $display .= 'Marker times:<br /><table style="width:100%">'."\n";
+
             foreach (self::$sessionBenchmarkMarkers as $marker) {
                 if ($marker['marker_color']) {
                     $additionalColor = 'background-color:#' . dechex($marker['marker_color']);
                 } else {
                     $additionalColor = '';
                 }
+
                 if ($marker['marker_time'] === '') {
                     $time       = '-';
                     $percent    = '-';
@@ -220,6 +232,7 @@ class Timer
                     $percent    .= ' %';
                     $ram        .= ' kB';
                 }
+
                 $display .= '<tr style="' . $additionalColor . '">
                     <td style="width:40%;color:#fff">' . $marker['marker_name'] . '</td>' . "\n";
                 $display .= '<td style="width:20%;color: #fff;">' . $time . '</td>'."\n";
@@ -227,8 +240,10 @@ class Timer
                 $display .= '<td style="width:20%;color:#fff">' . $ram . '</td>
                     </tr>' . "\n";
             }
+
             $display .= '</table></div>';
         }
+
         return $display;
     }
 
