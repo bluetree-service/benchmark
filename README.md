@@ -1,4 +1,4 @@
-ClassBenchmark
+BlueTree Service Benchmark
 ============
 
 
@@ -39,7 +39,6 @@ Project description
 
 * PHP 5.4 or higher
 * DOM extension enabled
-* ClassKernel library [class-kernel](https://github.com/chajr/class-kernel)
 
 Change log
 --------------
