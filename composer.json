@@ -1,11 +1,11 @@
 {
-    "name": "bluetree-service/class-benchmark",
+    "name": "bluetree-service/benchmark",
     "type": "library",
     "license": "Apache-2.0",
     "description": "Class Benchmark libraries",
     "keywords": ["benchmark", "tracer", "debugger", "class library", "execution time"],
     "homepage": "https://github.com/chajr/class-benchmark",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "authors": [
         {
             "name": "Michał Adamiak",
