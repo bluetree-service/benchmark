@@ -5,12 +5,12 @@ namespace Benchmark\Performance;
 /**
  * allows to check performance of framework
  *
- * @category    BlueFramework
- * @package     tester
- * @subpackage  benchmark
+ * @category    BlueTree Service
+ * @package     benchmark
+ * @subpackage  Performance
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
- * @version     1.6.2
+ * @version     1.0.0
  */
 class Timer
 {
@@ -18,70 +18,70 @@ class Timer
      * information that marker time goes to group
      * @var array
      */
-    protected static $_groupOn = array();
+    protected static $groupOn = [];
 
     /**
      * contains array of times for group of markers
      * @var array
      */
-    protected static $_group = array();
+    protected static $group = [];
 
     /**
      * contains data about benchmark started memory usage
      * @var integer
      */
-    protected static $_sessionMemoryStart = 0;
+    protected static $sessionMemoryStart = 0;
 
     /**
      * contains data about started benchmark session time
      * @var integer
      */
-    protected static $_sessionBenchmarkStart = 0;
+    protected static $sessionBenchmarkStart = 0;
 
     /**
      * contains data about benchmark marker time
      * @var integer
      */
-    protected static $_sessionBenchmarkMarker = 0;
+    protected static $sessionBenchmarkMarker = 0;
 
     /**
      * contains data about benchmark markers
      * @var array
      */
-    protected static $_sessionBenchmarkMarkers = array();
+    protected static $sessionBenchmarkMarkers = [];
 
     /**
      * contains data about benchmark finish time
      * @var integer
      */
-    protected static $_sessionBenchmarkFinish = 0;
+    protected static $sessionBenchmarkFinish = 0;
 
     /**
      * contains information that benchmark is on or off
      * @var bool
      */
-    protected static $_sessionBenchmarkOn = TRUE;
+    protected static $sessionBenchmarkOn = true;
 
     /**
      * contains color information for group of markers
-     * @var hex
+     * @var int
      */
-    protected static $_backgroundColor = 0x3d3d3d;
+    protected static $backgroundColor = 0x3d3d3d;
 
     /**
      * start benchmark, and set in internal session start time
      *
-     * @param boolean $on
+     * @param boolean $enabled
      */
-    public static function start($on = TRUE)
+    public static function start($enabled = true)
     {
-        if ($on) {
-            $time                           = microtime(TRUE);
-            self::$_sessionMemoryStart      = memory_get_usage();
-            self::$_sessionBenchmarkStart   = $time;
-            self::$_sessionBenchmarkMarker  = $time;
+        if ($enabled) {
+            $time                           = microtime(true);
+            self::$sessionMemoryStart      = memory_get_usage();
+            self::$sessionBenchmarkStart   = $time;
+            self::$sessionBenchmarkMarker  = $time;
         } else {
-            self::$_sessionBenchmarkOn      = FALSE;
+            self::$sessionBenchmarkOn      = false;
         }
     }
 
@@ -92,24 +92,22 @@ class Timer
      */
     public static function setMarker($name)
     {
-        if (self::$_sessionBenchmarkOn) {
-            $markerTime = microtime(TRUE) - self::$_sessionBenchmarkMarker;
-
-            $markerColor = FALSE;
-            if (!empty(self::$_groupOn)) {
-                $markerColor = self::$_backgroundColor;
-                foreach (self::$_group as $marker => $info) {
-                    if (!isset(self::$_group[$marker]['time'])) {
+        if (self::$sessionBenchmarkOn) {
+            $markerTime = microtime(true) - self::$sessionBenchmarkMarker;
+            $markerColor = false;
+            if (!empty(self::$groupOn)) {
+                $markerColor = self::$backgroundColor;
+                foreach (array_keys(self::$group) as $marker) {
+                    if (!isset(self::$group[$marker]['time'])) {
                         $groupMarkerTime = $markerTime;
                     } else {
-                        $groupMarkerTime = self::$_group[$marker]['time'] + $markerTime;
+                        $groupMarkerTime = self::$group[$marker]['time'] + $markerTime;
                     }
-                    self::$_group[$marker]['time'] = $groupMarkerTime;
+                    self::$group[$marker]['time'] = $groupMarkerTime;
                 }
             }
-
-            self::$_sessionBenchmarkMarker    = microtime(TRUE);
-            self::$_sessionBenchmarkMarkers[] = array(
+            self::$sessionBenchmarkMarker    = microtime(true);
+            self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $name,
                 'marker_time'       => $markerTime,
                 'marker_memory'     => memory_get_usage(),
@@ -125,18 +123,16 @@ class Timer
      */
     public static function startGroup($groupName)
     {
-        if (self::$_sessionBenchmarkOn) {
-            self::$_backgroundColor += 0x101010;
-
-            self::$_sessionBenchmarkMarkers[] = array(
+        if (self::$sessionBenchmarkOn) {
+            self::$backgroundColor += 0x101010;
+            self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $groupName . ' START',
                 'marker_time'       => '',
                 'marker_memory'     => '',
-                'marker_color'      => self::$_backgroundColor
+                'marker_color'      => self::$backgroundColor
             );
-
-            self::$_group[$groupName]['memory'] = memory_get_usage();
-            self::$_groupOn[$groupName]         = $groupName;
+            self::$group[$groupName]['memory'] = memory_get_usage();
+            self::$groupOn[$groupName]         = $groupName;
         }
     }
 
@@ -144,25 +140,23 @@ class Timer
      * end counting given group of markers
      * @param string $groupName
      * @uses Test_Benchmark::$benchmarkOn
-     * @uses Test_Benchmark::$_backgroundColor
-     * @uses Test_Benchmark::$_session
-     * @uses Test_Benchmark::$_group
-     * @uses Test_Benchmark::$_groupOn
+     * @uses Test_Benchmark::$backgroundColor
+     * @uses Test_Benchmark::$session
+     * @uses Test_Benchmark::$group
+     * @uses Test_Benchmark::$groupOn
      */
     public static function endGroup($groupName)
     {
-        if (self::$_sessionBenchmarkOn) {
-            unset(self::$_groupOn[$groupName]);
-            $memoryUsage = memory_get_usage() - self::$_group[$groupName]['memory'];
-
-            self::$_sessionBenchmarkMarkers[] = array(
+        if (self::$sessionBenchmarkOn) {
+            unset(self::$groupOn[$groupName]);
+            $memoryUsage = memory_get_usage() - self::$group[$groupName]['memory'];
+            self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $groupName . ' END',
-                'marker_time'       => self::$_group[$groupName]['time'],
+                'marker_time'       => self::$group[$groupName]['time'],
                 'marker_memory'     => $memoryUsage,
-                'marker_color'      => self::$_backgroundColor
+                'marker_color'      => self::$backgroundColor
             );
-
-            self::$_backgroundColor -= 0x101010;
+            self::$backgroundColor -= 0x101010;
         }
     }
 
@@ -171,58 +165,48 @@ class Timer
      */
     public static function stop()
     {
-        if (self::$_sessionBenchmarkOn) {
-            self::$_sessionBenchmarkFinish = microtime(TRUE);
+        if (self::$sessionBenchmarkOn) {
+            self::$sessionBenchmarkFinish = microtime(true);
         }
     }
 
     /**
      * prepare view and display list of markers, their times and percentage values
      */
-    public static function display()
+    public static function calculateStats()
     {
         $display = '';
-        if (self::$_sessionBenchmarkOn) {
+        if (self::$sessionBenchmarkOn) {
             $display = '<div style="
             color: #FFFFFF;
             background-color: #3d3d3d;
-            border-color: #FFFFFF;
-            border-width: 1px;
-            border-style: solid;
-            margin-left: auto;
-            margin-right: auto;
+            border: 1px solid #FFFFFF;
             width: 90%;
             text-align: center;
-            margin-bottom:25px;
-            margin-top:25px;
+            margin: 25px auto;
             ">';
-
-            $benchmarkStartTime = self::$_sessionBenchmarkStart;
-            $benchmarkEndTime   = self::$_sessionBenchmarkFinish;
+            $benchmarkStartTime = self::$sessionBenchmarkStart;
+            $benchmarkEndTime   = self::$sessionBenchmarkFinish;
             $total              = ($benchmarkEndTime - $benchmarkStartTime) *1000;
             $formatTime         = number_format($total, 5, '.', ' ');
             $memoryUsage        = memory_get_usage()/1024;
-
             $display .= '
                 Total application runtime: ' . $formatTime . ' ms&nbsp;&nbsp;&nbsp;&nbsp;
                 Total memory usage: '. number_format($memoryUsage, 3, ',', '')
                 . ' kB<br /><br />';
-
             $display .= 'Marker times:<br /><table style="width:100%">'."\n";
-
-            foreach (self::$_sessionBenchmarkMarkers as $marker) {
+            foreach (self::$sessionBenchmarkMarkers as $marker) {
                 if ($marker['marker_color']) {
                     $additionalColor = 'background-color:#' . dechex($marker['marker_color']);
                 } else {
                     $additionalColor = '';
                 }
-
                 if ($marker['marker_time'] === '') {
                     $time       = '-';
                     $percent    = '-';
                     $ram        = '-';
                 } else {
-                    $ram      = ($marker['marker_memory'] - self::$_sessionMemoryStart) / 1024;
+                    $ram      = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
                     $ram      = number_format($ram, 3, ',', '');
                     $percent  = ($marker['marker_time'] / $total) *100000;
                     $percent  = number_format($percent, 5);
@@ -236,11 +220,10 @@ class Timer
                     $percent    .= ' %';
                     $ram        .= ' kB';
                 }
-
                 $display .= '<tr style="' . $additionalColor . '">
                     <td style="width:40%;color:#fff">' . $marker['marker_name'] . '</td>' . "\n";
-                $display .= '<td style="width:20%">' . $time . '</td>'."\n";
-                $display .= '<td style="width:20%">' . $percent . '</td>'."\n";
+                $display .= '<td style="width:20%;color: #fff;">' . $time . '</td>'."\n";
+                $display .= '<td style="width:20%;color: #fff;">' . $percent . '</td>'."\n";
                 $display .= '<td style="width:20%;color:#fff">' . $ram . '</td>
                     </tr>' . "\n";
             }
@@ -254,7 +237,7 @@ class Timer
      */
     public static function turnOffBenchmark()
     {
-        self::$_sessionBenchmarkOn = FALSE;
+        self::$sessionBenchmarkOn = false;
     }
 
     /**
@@ -262,6 +245,6 @@ class Timer
      */
     public static function turnOnBenchmark()
     {
-        self::$_sessionBenchmarkOn = TRUE;
+        self::$sessionBenchmarkOn = true;
     }
 }
