@@ -4,8 +4,8 @@
     "license": "Apache-2.0",
     "description": "Class Benchmark libraries",
     "keywords": ["benchmark", "tracer", "debugger", "class library", "execution time"],
-    "homepage": "https://github.com/chajr/class-benchmark",
-    "version": "0.2.1",
+    "homepage": "https://github.com/bluetree-service/benchmark",
+    "version": "0.2.2",
     "authors": [
         {
             "name": "Michał Adamiak",
@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ClassKernel\\": "src/"
+            "Benchmark\\": "src/"
         }
     }
 }
