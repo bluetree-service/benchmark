@@ -5,12 +5,11 @@ namespace Benchmark\Performance;
 /**
  * allows to check performance of framework
  *
- * @category    BlueTree Service
- * @package     benchmark
+ * @category    BlueTree Service Benchmark
+ * @package     Benchmark
  * @subpackage  Performance
  * @author      Michał Adamiak    <chajr@bluetree.pl>
- * @copyright   chajr/bluetree
- * @version     1.0.0
+ * @copyright   chajr/bluetree-service
  */
 class Timer
 {
