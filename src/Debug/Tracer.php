@@ -17,25 +17,25 @@ class Tracer
      * contains data to display
      * @var string
      */
-    protected static $_display = '';
+    protected static $tmpDisplay = '';
 
     /**
      * keep information about marker times
      * @var array
      */
-    protected static $_session = array();
+    protected static $session = array();
 
     /**
      * information that tracer is on, or off
      * @var boolean
      */
-    protected static $_tracerOn = TRUE;
+    protected static $tracerOn = true;
 
     /**
      * store styles for display
      * @var array
      */
-    protected static $_divStyles = [
+    protected static $divStyles = [
         'c'            => 'width:3%;float:left;padding:5px 0',
         'name'         => 'width:12%;float:left;padding:5px 0',
         'time'         => 'width:10%;float:left;padding:5px 0',
@@ -51,25 +51,25 @@ class Tracer
      * if set to false tracing data wont be displayed, for only saving file
      * @var boolean
      */
-    static $display = TRUE;
+    public static $display = true;
 
     /**
      * contains number of step for current given marker
      * @var integer
      */
-    static $traceStep = 0;
+    public static $traceStep = 0;
 
     /**
      * starting tracing
      *
-     * @param boolean $on
+     * @param boolean $enabled
      */
-    public static function start($on = TRUE)
+    public static function start($enabled = true)
     {
-        if ($on) {
+        if ($enabled) {
             self::marker(array('Tracer started'));
         } else {
-            self::$_tracerOn = FALSE;
+            self::$tracerOn = false;
         }
     }
 
@@ -84,17 +84,19 @@ class Tracer
      */
     public static function marker($data)
     {
-        $defaultData = array('', NULL, NULL);
+        $defaultData = array('', null, null);
         $data = array_merge($data, $defaultData);
 
-        if ((bool)self::$_tracerOn) {
+        if ((bool)self::$tracerOn) {
             ++self::$traceStep;
 
-            $time = microtime(TRUE);
+            $time = microtime(true);
             $time = preg_split('#\.|,#', $time);
+
             if (!isset($time[1])) {
                 $time[1] = 0;
             }
+
             $markerTime = gmstrftime('%d-%m-%Y<br/>%H:%M:%S:', $time[0]) . $time[1];
 
             if (!$data[1]) {
@@ -116,7 +118,7 @@ class Tracer
                 }
             }
 
-            self::$_session['markers'][] = array(
+            self::$session['markers'][] = array(
                 'time'      => $markerTime,
                 'name'      => $data[0],
                 'debug'     => $data[1],
@@ -140,9 +142,9 @@ class Tracer
      */
     public static function display()
     {
-        if (self::$_tracerOn && self::$display) {
+        if (self::$tracerOn && self::$display) {
             self::stop();
-            self::$_display = '<div style="
+            self::$display = '<div style="
             color: #FFFFFF;
             background-color: #3d3d3d;
             margin: 25px auto;
@@ -153,31 +155,32 @@ class Tracer
             font-size:12px;
             ">';
 
-            self::$_display .= '
+            self::$display .= '
                 Tracer
                 <br /><br />
             ';
 
-            self::$_display .= 'Markers time:<br /><div style="color:#fff;text-align:left">' . "\n";
+            self::$display .= 'Markers time:<br /><div style="color:#fff;text-align:left">' . "\n";
 
-            self::$_display .= '
+            self::$display .= '
                     <div style="background-color:#6D6D6D">
-                        <div style="' . self::$_divStyles['c'] . '">C</div>
-                        <div style="' . self::$_divStyles['name'] . '">Name</div>
-                        <div style="' . self::$_divStyles['time'] . '">Time</div>
-                        <div style="' . self::$_divStyles['file'] . '">File</div>
-                        <div style="' . self::$_divStyles['line'] . '">Line</div>
-                        <div style="' . self::$_divStyles['function'] . '">Function</div>
-                        <div style="' . self::$_divStyles['class'] . '">Class</div>
-                        <!--<div style="' . self::$_divStyles['type'] . '">T</div>-->
-                        <div style="' . self::$_divStyles['args'] . '">Arguments</div>
+                        <div style="' . self::$divStyles['c'] . '">C</div>
+                        <div style="' . self::$divStyles['name'] . '">Name</div>
+                        <div style="' . self::$divStyles['time'] . '">Time</div>
+                        <div style="' . self::$divStyles['file'] . '">File</div>
+                        <div style="' . self::$divStyles['line'] . '">Line</div>
+                        <div style="' . self::$divStyles['function'] . '">Function</div>
+                        <div style="' . self::$divStyles['class'] . '">Class</div>
+                        <!--<div style="' . self::$divStyles['type'] . '">T</div>-->
+                        <div style="' . self::$divStyles['args'] . '">Arguments</div>
                         <div style="clear:both"></div>
                     </div>
                 ';
 
-            $l = 0;
-            foreach (self::$_session['markers'] as $marker) {
-                if ($l %2) {
+            $counter = 0;
+
+            foreach (self::$session['markers'] as $marker) {
+                if ($counter %2) {
                     $background = 'background-color:#4D4D4D';
                 } else {
                     $background = '';
@@ -187,51 +190,50 @@ class Tracer
                     $background = 'background-color:' . $marker['color'];
                 }
 
-                self::$_display .= '<div style="' . $background . '">
-                    <div style="' . self::$_divStyles['c'] . '">'
-                    . ++$l . '</div>'."\n";
+                self::$display .= '<div style="' . $background . '">
+                    <div style="' . self::$divStyles['c'] . '">'
+                    . ++$counter . '</div>'."\n";
 
-                self::$_display .= '<div style="' . self::$_divStyles['name'] . '">'
+                self::$display .= '<div style="' . self::$divStyles['name'] . '">'
                     . $marker['name'] . '</div>'."\n";
 
-                self::$_display .= '<div style="' . self::$_divStyles['time'] . '">'
+                self::$display .= '<div style="' . self::$divStyles['time'] . '">'
                     . $marker['time'] . '</div>'."\n";
 
-                self::$_display .= '<div style="' . self::$_divStyles['file'] . '">'
+                self::$display .= '<div style="' . self::$divStyles['file'] . '">'
                     . $marker['debug'][0]['file'] . '</div>'."\n";
 
-                self::$_display .= '<div style="' . self::$_divStyles['line'] . '">'
+                self::$display .= '<div style="' . self::$divStyles['line'] . '">'
                     . $marker['debug'][0]['line'] . '</div>'."\n";
 
-                self::$_display .= '<div style="' . self::$_divStyles['function'] . '">'
+                self::$display .= '<div style="' . self::$divStyles['function'] . '">'
                     . $marker['debug'][0]['function'] . '</div>'."\n";
 
-                self::$_display .= '<div style="' . self::$_divStyles['class'] . '">'
+                self::$display .= '<div style="' . self::$divStyles['class'] . '">'
                     . $marker['debug'][0]['class'] . '</div>'."\n";
 
-//                self::$_display .= '<div style="' . self::$_divStyles['type'] . '">' 
-//                    . $marker['debug'][0]['type'] . '</div>'."\n";
-
-                self::$_display .= '<div style="' . self::$_divStyles['args'] . '"><pre>'
-                    . var_export($marker['debug'][0]['args'], TRUE)
+                self::$display .= '<div style="' . self::$divStyles['args'] . '"><pre>'
+                    . var_export($marker['debug'][0]['args'], true)
                     . ' </pre></div>'."\n";
 
-                self::$_display .= '<div style="clear:both"></div></div>';
+                self::$display .= '<div style="clear:both"></div></div>';
             }
-            self::$_display .= '</div></div>';
+            self::$display .= '</div></div>';
         }
-        return self::$_display;
+
+        return self::$display;
     }
 
     /**
      * save tracing data to log file
      */
-    public static function saveToFile()
+    public static function saveToFile($filePath)
     {
-        if (self::$_tracerOn) {
+        if (self::$tracerOn) {
             self::display();
-            self::$_display .= '<pre>' . var_export($_SERVER, TRUE) . '</pre>';
-            error_class::log('tracer', self::$_display);
+            self::$display .= '<pre>' . var_export($_SERVER, true) . '</pre>';
+
+            file_put_contents($filePath, self::$display);
         }
     }
 
@@ -240,7 +242,7 @@ class Tracer
      */
     public static function turnOffTracer()
     {
-        self::$_tracerOn = FALSE;
+        self::$tracerOn = false;
     }
 
     /**
@@ -248,6 +250,6 @@ class Tracer
      */
     public static function turnOnTracer()
     {
-        self::$_tracerOn = TRUE;
+        self::$tracerOn = true;
     }
 }
