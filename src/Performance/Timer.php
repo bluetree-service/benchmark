@@ -179,35 +179,28 @@ class Timer
 
     /**
      * prepare view and display list of markers, their times and percentage values
+     *
+     * @return array
      */
     public static function calculateStats()
     {
-        $display = '';
+        $aggregation = [];
 
         if (self::$sessionBenchmarkOn) {
-            $display = '<div style="
-            color: #FFFFFF;
-            background-color: #3d3d3d;
-            border: 1px solid #FFFFFF;
-            width: 90%;
-            text-align: center;
-            margin: 25px auto;
-            ">';
-
             $benchmarkStartTime = self::$sessionBenchmarkStart;
             $benchmarkEndTime   = self::$sessionBenchmarkFinish;
             $total              = ($benchmarkEndTime - $benchmarkStartTime) *1000;
             $formatTime         = number_format($total, 5, '.', ' ');
             $memoryUsage        = memory_get_usage()/1024;
-            $display .= '
-                Total application runtime: ' . $formatTime . ' ms&nbsp;&nbsp;&nbsp;&nbsp;
-                Total memory usage: '. number_format($memoryUsage, 3, ',', '')
-                . ' kB<br /><br />';
-            $display .= 'Marker times:<br /><table style="width:100%">'."\n";
+
+            $aggregation = [
+                'total_rune_time' => $formatTime,
+                'total_memory' => $memoryUsage,
+            ];
 
             foreach (self::$sessionBenchmarkMarkers as $marker) {
                 if ($marker['marker_color']) {
-                    $additionalColor = 'background-color:#' . dechex($marker['marker_color']);
+                    $additionalColor = dechex($marker['marker_color']);
                 } else {
                     $additionalColor = '';
                 }
@@ -232,18 +225,31 @@ class Timer
                     $ram        .= ' kB';
                 }
 
-                $display .= '<tr style="' . $additionalColor . '">
-                    <td style="width:40%;color:#fff">' . $marker['marker_name'] . '</td>' . "\n";
-                $display .= '<td style="width:20%;color: #fff;">' . $time . '</td>'."\n";
-                $display .= '<td style="width:20%;color: #fff;">' . $percent . '</td>'."\n";
-                $display .= '<td style="width:20%;color:#fff">' . $ram . '</td>
-                    </tr>' . "\n";
+                $aggregation['markers'][] = [
+                    'color' => $additionalColor,
+                    'name' => $marker['marker_name'],
+                    'time' => $time,
+                    'percentage' => $percent,
+                    'memory' => $ram,
+                ];
             }
-
-            $display .= '</table></div>';
         }
 
-        return $display;
+        return $aggregation;
+    }
+
+    /**
+     * @param array $stats
+     * @param string $path
+     * @throws \Exception
+     */
+    public static function toFile(array $stats, $path)
+    {
+        if (!file_exists($path)) {
+            throw new \Exception('File don\'t exists: ' . $path);
+        }
+
+        file_put_contents($path, json_encode($stats));
     }
 
     /**
