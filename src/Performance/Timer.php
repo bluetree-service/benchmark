@@ -76,7 +76,7 @@ class Timer
     {
         if ($enabled) {
             $time                          = microtime(true);
-            self::$sessionMemoryStart      = memory_get_usage();
+            self::$sessionMemoryStart      = memory_get_usage(true);
             self::$sessionBenchmarkStart   = $time;
             self::$sessionBenchmarkMarker  = $time;
         } else {
@@ -113,7 +113,7 @@ class Timer
             self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $name,
                 'marker_time'       => $markerTime,
-                'marker_memory'     => memory_get_usage(),
+                'marker_memory'     => memory_get_usage(true),
                 'marker_color'      => $markerColor
             );
         }
@@ -136,7 +136,7 @@ class Timer
                 'marker_color'      => self::$backgroundColor
             );
 
-            self::$group[$groupName]['memory'] = memory_get_usage();
+            self::$group[$groupName]['memory'] = memory_get_usage(true);
             self::$groupOn[$groupName]         = $groupName;
         }
     }
@@ -154,7 +154,7 @@ class Timer
     {
         if (self::$sessionBenchmarkOn) {
             unset(self::$groupOn[$groupName]);
-            $memoryUsage = memory_get_usage() - self::$group[$groupName]['memory'];
+            $memoryUsage = memory_get_usage(true) - self::$group[$groupName]['memory'];
 
             self::$sessionBenchmarkMarkers[] = array(
                 'marker_name'       => $groupName . ' END',
@@ -180,18 +180,19 @@ class Timer
     /**
      * prepare view and display list of markers, their times and percentage values
      *
+     * @param bool $formatted
      * @return array
      */
-    public static function calculateStats()
+    public static function calculateStats($formatted = true)
     {
         $aggregation = [];
 
         if (self::$sessionBenchmarkOn) {
             $benchmarkStartTime = self::$sessionBenchmarkStart;
-            $benchmarkEndTime   = self::$sessionBenchmarkFinish;
-            $total              = ($benchmarkEndTime - $benchmarkStartTime) *1000;
-            $formatTime         = number_format($total, 5, '.', ' ');
-            $memoryUsage        = memory_get_usage()/1024;
+            $benchmarkEndTime = self::$sessionBenchmarkFinish;
+            $totalTime = ($benchmarkEndTime - $benchmarkStartTime) *1000;
+            $formatTime = $formatted ? number_format($totalTime, 5, '.', ' ') : $totalTime;
+            $memoryUsage = memory_get_usage()/1024;
 
             $aggregation = [
                 'total_rune_time' => $formatTime,
@@ -210,19 +211,15 @@ class Timer
                     $percent    = '-';
                     $ram        = '-';
                 } else {
-                    $ram      = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
-                    $ram      = number_format($ram, 3, ',', '');
-                    $percent  = ($marker['marker_time'] / $total) *100000;
-                    $percent  = number_format($percent, 5);
-                    $time     = number_format(
-                        $marker['marker_time'] *1000,
-                        5,
-                        '.',
-                        ' '
-                    );
-                    $time       .= ' ms';
-                    $percent    .= ' %';
-                    $ram        .= ' kB';
+                    $ram = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
+                    $ram = $formatted ? number_format($ram, 3, ',', '') . ' kB' : $ram;
+
+                    $percent = ($marker['marker_time'] / $totalTime) * 100000;
+                    $percent = $formatted ? number_format($percent, 5) . ' %' : $percent;
+
+                    $time = $formatted
+                        ? number_format($marker['marker_time'] * 1000, 5, '.', ' ' ) . ' ms'
+                        : $marker['marker_time'];
                 }
 
                 $aggregation['markers'][] = [
@@ -266,5 +263,13 @@ class Timer
     public static function turnOnBenchmark()
     {
         self::$sessionBenchmarkOn = true;
+    }
+
+    /**
+     * @return float
+     */
+    public static function getCurrentTime()
+    {
+        return microtime(true) - self::$sessionBenchmarkMarker;
     }
 }
