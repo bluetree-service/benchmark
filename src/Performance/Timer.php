@@ -72,15 +72,15 @@ class Timer
      *
      * @param boolean $enabled
      */
-    public static function start($enabled = true)
+    public static function start(bool $enabled = true) : void
     {
         if ($enabled) {
-            $time                          = microtime(true);
-            self::$sessionMemoryStart      = memory_get_usage(true);
-            self::$sessionBenchmarkStart   = $time;
-            self::$sessionBenchmarkMarker  = $time;
+            $time = microtime(true);
+            self::$sessionMemoryStart = memory_get_usage(true);
+            self::$sessionBenchmarkStart = $time;
+            self::$sessionBenchmarkMarker = $time;
         } else {
-            self::$sessionBenchmarkOn      = false;
+            self::$sessionBenchmarkOn = false;
         }
     }
 
@@ -89,7 +89,7 @@ class Timer
      *
      * @param string $name name of marker
      */
-    public static function setMarker($name)
+    public static function setMarker(string $name) : void
     {
         if (self::$sessionBenchmarkOn) {
             $markerTime = microtime(true) - self::$sessionBenchmarkMarker;
@@ -109,12 +109,12 @@ class Timer
                 }
             }
 
-            self::$sessionBenchmarkMarker    = microtime(true);
+            self::$sessionBenchmarkMarker = microtime(true);
             self::$sessionBenchmarkMarkers[] = array(
-                'marker_name'       => $name,
-                'marker_time'       => $markerTime,
-                'marker_memory'     => memory_get_usage(true),
-                'marker_color'      => $markerColor
+                'marker_name' => $name,
+                'marker_time' => $markerTime,
+                'marker_memory' => memory_get_usage(true),
+                'marker_color' => $markerColor
             );
         }
     }
@@ -124,43 +124,38 @@ class Timer
      *
      * @param string $groupName
      */
-    public static function startGroup($groupName)
+    public static function startGroup(string $groupName) : void
     {
         if (self::$sessionBenchmarkOn) {
             self::$backgroundColor += 0x101010;
 
             self::$sessionBenchmarkMarkers[] = array(
-                'marker_name'       => $groupName . ' START',
-                'marker_time'       => '',
-                'marker_memory'     => '',
-                'marker_color'      => self::$backgroundColor
+                'marker_name' => $groupName . ' START',
+                'marker_time' => '',
+                'marker_memory' => '',
+                'marker_color' => self::$backgroundColor
             );
 
             self::$group[$groupName]['memory'] = memory_get_usage(true);
-            self::$groupOn[$groupName]         = $groupName;
+            self::$groupOn[$groupName] = $groupName;
         }
     }
 
     /**
      * end counting given group of markers
      * @param string $groupName
-     * @uses Test_Benchmark::$benchmarkOn
-     * @uses Test_Benchmark::$backgroundColor
-     * @uses Test_Benchmark::$session
-     * @uses Test_Benchmark::$group
-     * @uses Test_Benchmark::$groupOn
      */
-    public static function endGroup($groupName)
+    public static function endGroup(string $groupName) : void
     {
         if (self::$sessionBenchmarkOn) {
             unset(self::$groupOn[$groupName]);
             $memoryUsage = memory_get_usage(true) - self::$group[$groupName]['memory'];
 
             self::$sessionBenchmarkMarkers[] = array(
-                'marker_name'       => $groupName . ' END',
-                'marker_time'       => self::$group[$groupName]['time'],
-                'marker_memory'     => $memoryUsage,
-                'marker_color'      => self::$backgroundColor
+                'marker_name' => $groupName . ' END',
+                'marker_time' => self::$group[$groupName]['time'],
+                'marker_memory' => $memoryUsage,
+                'marker_color' => self::$backgroundColor
             );
 
             self::$backgroundColor -= 0x101010;
@@ -170,7 +165,7 @@ class Timer
     /**
      * stop benchmark, and time counting, save last run time
      */
-    public static function stop()
+    public static function stop() : void
     {
         if (self::$sessionBenchmarkOn) {
             self::$sessionBenchmarkFinish = microtime(true);
@@ -183,7 +178,7 @@ class Timer
      * @param bool $formatted
      * @return array
      */
-    public static function calculateStats($formatted = true)
+    public static function calculateStats(bool $formatted = true) : array
     {
         $aggregation = [];
 
@@ -207,9 +202,9 @@ class Timer
                 }
 
                 if ($marker['marker_time'] === '') {
-                    $time       = '-';
-                    $percent    = '-';
-                    $ram        = '-';
+                    $time = '-';
+                    $percent = '-';
+                    $ram = '-';
                 } else {
                     $ram = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
                     $ram = $formatted ? number_format($ram, 3, ',', '') . ' kB' : $ram;
@@ -218,7 +213,7 @@ class Timer
                     $percent = $formatted ? number_format($percent, 5) . ' %' : $percent;
 
                     $time = $formatted
-                        ? number_format($marker['marker_time'] * 1000, 5, '.', ' ' ) . ' ms'
+                        ? number_format($marker['marker_time'] * 1000, 5, '.', ' ') . ' ms'
                         : $marker['marker_time'];
                 }
 
@@ -238,12 +233,12 @@ class Timer
     /**
      * @param array $stats
      * @param string $path
-     * @throws \Exception
+     * @throws \DomainException
      */
-    public static function toFile(array $stats, $path)
+    public static function toFile(array $stats, string $path) : void
     {
         if (!file_exists($path)) {
-            throw new \Exception('File don\'t exists: ' . $path);
+            throw new \DomainException('File don\'t exists: ' . $path);
         }
 
         file_put_contents($path, json_encode($stats));
@@ -252,7 +247,7 @@ class Timer
     /**
      * turn off benchmark
      */
-    public static function turnOffBenchmark()
+    public static function turnOffBenchmark() : void
     {
         self::$sessionBenchmarkOn = false;
     }
@@ -260,7 +255,7 @@ class Timer
     /**
      * turn on benchmark
      */
-    public static function turnOnBenchmark()
+    public static function turnOnBenchmark() : void
     {
         self::$sessionBenchmarkOn = true;
     }
@@ -268,7 +263,7 @@ class Timer
     /**
      * @return float
      */
-    public static function getCurrentTime()
+    public static function getCurrentTime() : float
     {
         return microtime(true) - self::$sessionBenchmarkMarker;
     }

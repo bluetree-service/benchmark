@@ -23,7 +23,7 @@ class Tracer
      * keep information about marker times
      * @var array
      */
-    protected static $session = array();
+    protected static $session = [];
 
     /**
      * information that tracer is on, or off
@@ -36,15 +36,15 @@ class Tracer
      * @var array
      */
     protected static $divStyles = [
-        'c'            => 'width:3%;float:left;padding:5px 0',
-        'name'         => 'width:12%;float:left;padding:5px 0',
-        'time'         => 'width:10%;float:left;padding:5px 0',
-        'file'         => 'width:16%;float:left;padding:5px 0',
-        'line'         => 'width:3%;float:left;padding:5px 0',
-        'function'     => 'width:11%;float:left;padding:5px 0',
-        'class'        => 'width:15%;float:left;padding:5px 0',
-        'type'         => 'width:0%;float:left;padding:5px 0',
-        'args'         => 'width:30%;float:left;padding:5px 0',
+        'c' => 'width:3%;float:left;padding:5px 0',
+        'name' => 'width:12%;float:left;padding:5px 0',
+        'time' => 'width:10%;float:left;padding:5px 0',
+        'file' => 'width:16%;float:left;padding:5px 0',
+        'line' => 'width:3%;float:left;padding:5px 0',
+        'function' => 'width:11%;float:left;padding:5px 0',
+        'class' => 'width:15%;float:left;padding:5px 0',
+        'type' => 'width:0%;float:left;padding:5px 0',
+        'args' => 'width:30%;float:left;padding:5px 0',
     ];
 
     /**
@@ -64,7 +64,7 @@ class Tracer
      *
      * @param boolean $enabled
      */
-    public static function start($enabled = true)
+    public static function start(bool $enabled = true) : void
     {
         if ($enabled) {
             self::marker(array('Tracer started'));
@@ -82,16 +82,16 @@ class Tracer
      * @example marker(array('marker name', debug_backtrace()))
      * @example marker(array('marker name', debug_backtrace(), '#000000'))
      */
-    public static function marker($data)
+    public static function marker(array $data) : void
     {
-        $defaultData = array('', null, null);
+        $defaultData = ['', null, null];
         $data = array_merge($data, $defaultData);
 
         if ((bool)self::$tracerOn) {
             ++self::$traceStep;
 
             $time = microtime(true);
-            $time = preg_split('#\.|,#', $time);
+            $time = preg_split('#\[.,]#', $time);
 
             if (!isset($time[1])) {
                 $time[1] = 0;
@@ -100,29 +100,31 @@ class Tracer
             $markerTime = gmstrftime('%d-%m-%Y<br/>%H:%M:%S:', $time[0]) . $time[1];
 
             if (!$data[1]) {
-                $data[1] = array(array(
-                    'file'      => '',
-                    'line'      => '',
-                    'function'  => '',
-                    'class'     => '',
-                    'type'      => '',
-                    'args'      => ''
-                ));
+                $data[1] = [
+                    [
+                        'file' => '',
+                        'line' => '',
+                        'function' => '',
+                        'class' => '',
+                        'type' => '',
+                        'args' => ''
+                    ]
+                ];
             }
 
-            if (isset($data[1][0]['args']) && is_array($data[1][0]['args'])) {
+            if (isset($data[1][0]['args']) && \is_array($data[1][0]['args'])) {
                 foreach ($data[1][0]['args'] as $arg => $val) {
-                    if (is_object($val)) {
+                    if (\is_object($val)) {
                         $data[1][0]['args'][$arg] = serialize($val);
                     }
                 }
             }
 
             self::$session['markers'][] = array(
-                'time'      => $markerTime,
-                'name'      => $data[0],
-                'debug'     => $data[1],
-                'color'     => $data[2]
+                'time' => $markerTime,
+                'name' => $data[0],
+                'debug' => $data[1],
+                'color' => $data[2]
             );
         }
     }
@@ -130,7 +132,7 @@ class Tracer
     /**
      * add information about stop tracing
      */
-    public static function stop()
+    public static function stop() : void
     {
         self::marker(array('Tracer ended'));
     }
@@ -140,7 +142,7 @@ class Tracer
      *
      * @return string
      */
-    public static function display()
+    public static function display() : string
     {
         if (self::$tracerOn && self::$display) {
             self::stop();
@@ -226,8 +228,10 @@ class Tracer
 
     /**
      * save tracing data to log file
+     *
+     * @param string $filePath
      */
-    public static function saveToFile($filePath)
+    public static function saveToFile(string $filePath) : void
     {
         if (self::$tracerOn) {
             self::display();
@@ -240,7 +244,7 @@ class Tracer
     /**
      * turn off tracer
      */
-    public static function turnOffTracer()
+    public static function turnOffTracer() : void
     {
         self::$tracerOn = false;
     }
@@ -248,7 +252,7 @@ class Tracer
     /**
      * turn on tracer
      */
-    public static function turnOnTracer()
+    public static function turnOnTracer() : void
     {
         self::$tracerOn = true;
     }

@@ -7,7 +7,7 @@ class Html
     /**
      * prepare view and display list of markers, their times and percentage values
      */
-    public static function calculateStats()
+    public static function calculateStats() : string
     {
         $display = '';
 
@@ -22,10 +22,10 @@ class Html
             ">';
 
             $benchmarkStartTime = self::$sessionBenchmarkStart;
-            $benchmarkEndTime   = self::$sessionBenchmarkFinish;
-            $total              = ($benchmarkEndTime - $benchmarkStartTime) *1000;
-            $formatTime         = number_format($total, 5, '.', ' ');
-            $memoryUsage        = memory_get_usage()/1024;
+            $benchmarkEndTime = self::$sessionBenchmarkFinish;
+            $total = ($benchmarkEndTime - $benchmarkStartTime) *1000;
+            $formatTime = number_format($total, 5, '.', ' ');
+            $memoryUsage = memory_get_usage()/1024;
             $display .= '
                 Total application runtime: ' . $formatTime . ' ms&nbsp;&nbsp;&nbsp;&nbsp;
                 Total memory usage: '. number_format($memoryUsage, 3, ',', '')
@@ -40,23 +40,23 @@ class Html
                 }
 
                 if ($marker['marker_time'] === '') {
-                    $time       = '-';
-                    $percent    = '-';
-                    $ram        = '-';
+                    $time = '-';
+                    $percent = '-';
+                    $ram = '-';
                 } else {
-                    $ram      = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
-                    $ram      = number_format($ram, 3, ',', '');
-                    $percent  = ($marker['marker_time'] / $total) *100000;
-                    $percent  = number_format($percent, 5);
-                    $time     = number_format(
+                    $ram = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
+                    $ram = number_format($ram, 3, ',', '');
+                    $percent = ($marker['marker_time'] / $total) *100000;
+                    $percent = number_format($percent, 5);
+                    $time = number_format(
                         $marker['marker_time'] *1000,
                         5,
                         '.',
                         ' '
                     );
-                    $time       .= ' ms';
-                    $percent    .= ' %';
-                    $ram        .= ' kB';
+                    $time .= ' ms';
+                    $percent .= ' %';
+                    $ram .= ' kB';
                 }
 
                 $display .= '<tr style="' . $additionalColor . '">
