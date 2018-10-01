@@ -175,19 +175,20 @@ class Timer
     /**
      * prepare view and display list of markers, their times and percentage values
      *
-     * @param bool $formatted
+     * @param callable $dataFormatter
      * @return array
+     * @todo data formatter as array with callable, to avoid write all formatter
      */
-    public static function calculateStats(bool $formatted = true) : array
+    public static function calculateStats(callable $dataFormatter = ['Timer', 'outputFormatter']) : array
     {
         $aggregation = [];
 
         if (self::$sessionBenchmarkOn) {
             $benchmarkStartTime = self::$sessionBenchmarkStart;
             $benchmarkEndTime = self::$sessionBenchmarkFinish;
-            $totalTime = ($benchmarkEndTime - $benchmarkStartTime) *1000;
-            $formatTime = $formatted ? number_format($totalTime, 5, '.', ' ') : $totalTime;
-            $memoryUsage = memory_get_usage()/1024;
+            $totalTime = $benchmarkEndTime - $benchmarkStartTime;
+            $formatTime = $dataFormatter('total_rune_time', $totalTime);
+            $memoryUsage = $dataFormatter('total_memory', memory_get_usage());
 
             $aggregation = [
                 'total_rune_time' => $formatTime,
@@ -206,15 +207,13 @@ class Timer
                     $percent = '-';
                     $ram = '-';
                 } else {
-                    $ram = ($marker['marker_memory'] - self::$sessionMemoryStart) / 1024;
-                    $ram = $formatted ? number_format($ram, 3, ',', '') . ' kB' : $ram;
+                    $ram = ($marker['marker_memory'] - self::$sessionMemoryStart);
+                    $ram = $dataFormatter('memory', $ram);
 
                     $percent = ($marker['marker_time'] / $totalTime) * 100000;
-                    $percent = $formatted ? number_format($percent, 5) . ' %' : $percent;
+                    $percent = $dataFormatter('percentage', $percent);
 
-                    $time = $formatted
-                        ? number_format($marker['marker_time'] * 1000, 5, '.', ' ') . ' ms'
-                        : $marker['marker_time'];
+                    $time = $dataFormatter('time', $marker['marker_time']);
                 }
 
                 $aggregation['markers'][] = [
@@ -266,5 +265,40 @@ class Timer
     public static function getCurrentTime() : float
     {
         return microtime(true) - self::$sessionBenchmarkMarker;
+    }
+
+    /**
+     * @param string $type
+     * @param mixed $value
+     * @return string|mixed
+     */
+    protected static function outputFormatter(string $type, $value)
+    {
+        switch ($type) {
+            case 'total_rune_time':
+                return '~' . number_format($value, 4, '.', ' ') . ' ms';
+
+            case 'total_memory':
+                return '~' . ($value / 1024) . ' kB';
+
+            case 'percentage':
+                return number_format($value, 5) . ' %';
+
+            case 'memory':
+                return '~' . number_format($value, 3, ',', '') . ' kB';
+
+            case 'time':
+                return '~' . number_format($value * 1000, 4, '.', ' ') . ' ms';
+
+            default:
+                return $value;
+        }
+    }
+
+    public static function setOutputFormatter()
+    {
+        //raw
+        //symfony console
+        //html
     }
 }
