@@ -2,6 +2,10 @@
 
 namespace Benchmark\Performance;
 
+use Benchmark\Performance\Output\ {
+    Formatter, Html, Shell
+};
+
 /**
  * allows to check performance of framework
  *
@@ -175,20 +179,21 @@ class Timer
     /**
      * prepare view and display list of markers, their times and percentage values
      *
-     * @param callable $dataFormatter
+     * @param callable|null $dataFormatter
      * @return array
      * @todo data formatter as array with callable, to avoid write all formatter
      */
-    public static function calculateStats(callable $dataFormatter = ['Timer', 'outputFormatter']) : array
+    public static function calculateStats(?callable $dataFormatter = null) : array
     {
         $aggregation = [];
+        $dataFormatter = $dataFormatter ?? [Formatter::class, 'rawValues'];
 
         if (self::$sessionBenchmarkOn) {
             $benchmarkStartTime = self::$sessionBenchmarkStart;
             $benchmarkEndTime = self::$sessionBenchmarkFinish;
             $totalTime = $benchmarkEndTime - $benchmarkStartTime;
-            $formatTime = $dataFormatter('total_rune_time', $totalTime);
-            $memoryUsage = $dataFormatter('total_memory', memory_get_usage());
+            $formatTime = $dataFormatter($totalTime, 'total_rune_time');
+            $memoryUsage = $dataFormatter(memory_get_usage(), 'total_memory');
 
             $aggregation = [
                 'total_rune_time' => $formatTime,
@@ -196,28 +201,22 @@ class Timer
             ];
 
             foreach (self::$sessionBenchmarkMarkers as $marker) {
-                if ($marker['marker_color']) {
-                    $additionalColor = dechex($marker['marker_color']);
-                } else {
-                    $additionalColor = '';
-                }
-
                 if ($marker['marker_time'] === '') {
                     $time = '-';
                     $percent = '-';
                     $ram = '-';
                 } else {
                     $ram = ($marker['marker_memory'] - self::$sessionMemoryStart);
-                    $ram = $dataFormatter('memory', $ram);
+                    $ram = $dataFormatter($ram, 'memory');
 
-                    $percent = ($marker['marker_time'] / $totalTime) * 100000;
-                    $percent = $dataFormatter('percentage', $percent);
+                    $percent = ($marker['marker_time'] / $totalTime) * 100;
+                    $percent = $dataFormatter($percent, 'percentage');
 
-                    $time = $dataFormatter('time', $marker['marker_time']);
+                    $time = $dataFormatter($marker['marker_time'], 'time');
                 }
 
                 $aggregation['markers'][] = [
-                    'color' => $additionalColor,
+                    'color' => $marker['marker_color'],
                     'name' => $marker['marker_name'],
                     'time' => $time,
                     'percentage' => $percent,
@@ -269,36 +268,22 @@ class Timer
 
     /**
      * @param string $type
-     * @param mixed $value
-     * @return string|mixed
+     * @return array|string
      */
-    protected static function outputFormatter(string $type, $value)
+    public static function getFormattedOutput($type = 'raw')
     {
         switch ($type) {
-            case 'total_rune_time':
-                return '~' . number_format($value, 4, '.', ' ') . ' ms';
+            case 'shell':
+                return (new Shell)->formatOutput(self::calculateStats([Formatter::class, 'formatValues']));
 
-            case 'total_memory':
-                return '~' . ($value / 1024) . ' kB';
+            case 'html':
+                return (new Html)->formatOutput(self::calculateStats([Formatter::class, 'formatValues']));
 
-            case 'percentage':
-                return number_format($value, 5) . ' %';
-
-            case 'memory':
-                return '~' . number_format($value, 3, ',', '') . ' kB';
-
-            case 'time':
-                return '~' . number_format($value * 1000, 4, '.', ' ') . ' ms';
+            case 'raw+':
+                return self::calculateStats([Formatter::class, 'formatValues']);
 
             default:
-                return $value;
+                return self::calculateStats();
         }
-    }
-
-    public static function setOutputFormatter()
-    {
-        //raw
-        //symfony console
-        //html
     }
 }
