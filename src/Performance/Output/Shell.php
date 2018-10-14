@@ -4,7 +4,7 @@ namespace Benchmark\Performance\Output;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class Shell
+class Shell  implements OutputFormatterInterface
 {
     /**
      * @var ConsoleOutput
@@ -19,7 +19,7 @@ class Shell
     /**
      * prepare view and display list of markers, their times and percentage values
      */
-    public function formatOutput(array $output, callable $formatter) : string
+    public function formatOutput(array $output) : string
     {
         return '';
     }
