@@ -69,7 +69,7 @@ class Timer
      * contains color information for group of markers
      * @var int
      */
-    protected static $backgroundColor = 0x3d3d3d;
+    protected static $backgroundColor = 0x202020;
 
     /**
      * start benchmark, and set in internal session start time
@@ -97,11 +97,9 @@ class Timer
     {
         if (self::$sessionBenchmarkOn) {
             $markerTime = microtime(true) - self::$sessionBenchmarkMarker;
-            $markerColor = false;
+            $markerColor = self::$backgroundColor;
 
             if (!empty(self::$groupOn)) {
-                $markerColor = self::$backgroundColor;
-
                 foreach (array_keys(self::$group) as $marker) {
                     if (!isset(self::$group[$marker]['time'])) {
                         $groupMarkerTime = $markerTime;
@@ -118,7 +116,7 @@ class Timer
                 'marker_name' => $name,
                 'marker_time' => $markerTime,
                 'marker_memory' => memory_get_usage(true),
-                'marker_color' => $markerColor
+                'marker_color' => dechex($markerColor)
             );
         }
     }
@@ -137,7 +135,7 @@ class Timer
                 'marker_name' => $groupName . ' START',
                 'marker_time' => '',
                 'marker_memory' => '',
-                'marker_color' => self::$backgroundColor
+                'marker_color' => dechex(self::$backgroundColor)
             );
 
             self::$group[$groupName]['memory'] = memory_get_usage(true);
@@ -159,7 +157,7 @@ class Timer
                 'marker_name' => $groupName . ' END',
                 'marker_time' => self::$group[$groupName]['time'],
                 'marker_memory' => $memoryUsage,
-                'marker_color' => self::$backgroundColor
+                'marker_color' => dechex(self::$backgroundColor)
             );
 
             self::$backgroundColor -= 0x101010;
