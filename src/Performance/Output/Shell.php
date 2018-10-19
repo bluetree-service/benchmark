@@ -21,6 +21,18 @@ class Shell  implements OutputFormatterInterface
      */
     public function formatOutput(array $output) : string
     {
-        return '';
+        $totalRuneTime = $output['total_rune_time'];
+        $totalMemmory = $output['total_memory'];
+        $this->output->writeln(<<<EOT
+            Total application runtime: $totalRuneTime&nbsp;&nbsp;&nbsp;&nbsp;Total memory usage: $totalMemmory
+EOT
+        );
+
+        $this->output->writeln('');
+        foreach ($output['markers'] as $marker) {
+            $this->output->writeln($marker['name'] . $marker['time'] . $marker['percentage'] . $marker['memory']);
+        }
+
+        return PHP_EOL;
     }
 }
