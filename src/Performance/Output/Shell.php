@@ -22,9 +22,9 @@ class Shell  implements OutputFormatterInterface
     public function formatOutput(array $output) : string
     {
         $totalRuneTime = $output['total_rune_time'];
-        $totalMemmory = $output['total_memory'];
+        $totalMemory = $output['total_memory'];
         $this->output->writeln(<<<EOT
-            Total application runtime: $totalRuneTime&nbsp;&nbsp;&nbsp;&nbsp;Total memory usage: $totalMemmory
+            Total application runtime: $totalRuneTime&nbsp;&nbsp;&nbsp;&nbsp;Total memory usage: $totalMemory
 EOT
         );
 
