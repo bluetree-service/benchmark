@@ -4,7 +4,7 @@ namespace Tests;
 
 use Benchmark\Performance\Timer;
 
-class TimerTest extends \PHPUnit_Framework_TestCase
+class TimerTest extends \PHPUnit\Framework\TestCase
 {
     public function testBasic()
     {

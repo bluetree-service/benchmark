@@ -1,6 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.5.0.0 - 2018-10-30
+### Added
+* Changelog description
+* Added output and data formatter
+* Return time stats for shell
+* Some example scripts
+### Changed
+* Code convention
+* Now required PHP ~ 7.1
+* Fixed test class
+### Removed
+* composer.lock as library composer convention
+
 ## 0.4.0.0 - 2018-09-14
 ### Added
 * Some PHPUnit tests

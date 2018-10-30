@@ -13,7 +13,7 @@ class Formatter
     {
         switch ($type) {
             case 'total_rune_time':
-                return $this->formatTime($value);
+                return self::formatTime($value);
 
             case 'total_memory':
                 return '~' . ($value / 1024) . ' kB';
@@ -25,7 +25,7 @@ class Formatter
                 return '~' . number_format($value, 3, ',', '') . ' kB';
 
             case 'time':
-                return $this->formatTime($value);
+                return self::formatTime($value);
 
             default:
                 return $value;
@@ -41,7 +41,7 @@ class Formatter
         return $value;
     }
 
-    protected function formatTime($value) : string
+    protected static function formatTime($value) : string
     {
         return '~' . number_format($value * 1000, 4, '.', ' ') . ' ms';
     }
