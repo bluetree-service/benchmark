@@ -41,7 +41,11 @@ class Formatter
         return $value;
     }
 
-    protected static function formatTime($value) : string
+    /**
+     * @param $value
+     * @return string
+     */
+    protected static function formatTime(float $value) : string
     {
         return '~' . number_format($value * 1000, 4, '.', ' ') . ' ms';
     }
