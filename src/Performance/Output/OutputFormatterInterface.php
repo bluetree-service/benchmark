@@ -4,5 +4,9 @@ namespace Benchmark\Performance\Output;
 
 interface OutputFormatterInterface
 {
-    public function formatOutput(array $output);
+    /**
+     * @param array $output
+     * @return string
+     */
+    public function formatOutput(array $output): string;
 }

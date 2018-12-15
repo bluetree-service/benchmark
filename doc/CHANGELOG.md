@@ -1,10 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## 0.5.1.0 - 2018-11-
+## 0.5.1.0 - 2018-12-15
 ### Added
 * Configuration for travis, scrutinizer & codeclimate
 * Missing phpdoc
+* Todo file with description of future works
+* strict types
+### Changed
+* Formatter methods converted to static
+* Some I/O types for methods
 
 ## 0.5.0.0 - 2018-10-30
 ### Added

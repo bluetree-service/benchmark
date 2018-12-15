@@ -1,0 +1,2 @@
+- [ ] rebuild Tracer class
+- [ ] group summary in shell output

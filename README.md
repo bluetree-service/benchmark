@@ -40,6 +40,69 @@ store stats inside one group. Of course there is possibility to create nested gr
 * **turnOffBenchmark()** allow to turn off Timer
 * **turnOnBenchmark()** allow to turn on Timer
 
+### Timer formatting output
+There are three possibilities to get formatted output. First one allow to ger output as array with formatted time, memory
+and percentage values. second one allow to get output formatted by _Symfony Console_ output class. And last one allow
+to get output as _HTML_.
+
+#### Pre-formatted array
+After `\Benchmark\Performance\Timer::stop();` execute `(Timer::getFormattedOutput('raw+')` to get array with formatted
+memory, time and percentage. Using __raw__ as parameter return raw values, the same as usage of
+ `\Benchmark\Performance\Timer::calculateStats();`
+
+#### Console output
+After `\Benchmark\Performance\Timer::stop();` execute `(Timer::getFormattedOutput('shell')` to get formatted output for
+console. Output will be equivalent of that:  
+```
+Total application runtime: ~1 001.8280 ms    Total memory usage: ~3602 kB
+=========================================================================
+
+val: 0 ~0.0050 ms    0.00050 %    ~0,000 kB
+val: 1 ~100.1649 ms    9.99821 %    ~0,000 kB
+val: 2 ~100.1842 ms    10.00014 %    ~0,000 kB
+val: 3 ~100.1740 ms    9.99912 %    ~0,000 kB
+val: 4 ~100.1639 ms    9.99812 %    ~0,000 kB
+    example group START
+    val: 0 ~100.2018 ms    10.00190 %    ~0,000 kB
+    val: 1 ~100.1649 ms    9.99821 %    ~0,000 kB
+    val: 2 ~100.1790 ms    9.99962 %    ~0,000 kB
+    val: 3 ~100.1539 ms    9.99712 %    ~0,000 kB
+    val: 4 ~100.1499 ms    9.99671 %    ~0,000 kB
+    example group END
+```
+
+#### HTML output
+After `\Benchmark\Performance\Timer::stop();` execute `(Timer::getFormattedOutput('html')` to get formatted output for
+browser. Output will be equivalent of that:  
+```html
+<div style="
+    color: #fff;
+    background-color: #000;
+    border: 1px solid #fff;
+    width: 90%;
+    text-align: center;
+    margin: 25px auto;
+">
+    Total application runtime: ~1 001.8280 ms&nbsp;&nbsp;&nbsp;&nbsp;Total memory usage: ~3129.140625 kB
+    <br />
+    <br />
+    Marker times:
+    <br />
+    <table style="width:100%">
+        <tr style="background-color:#202020">
+            <td style="width:40%;color:#fff">val: 0</td>
+            <td style="width:20%;color: #fff;">~0.0050 ms</td>
+            <td style="width:20%;color: #fff;">0.00050 %</td>
+            <td style="width:20%;color:#fff">~0,000 kB</td>
+        </tr>
+```
+
+### Write own output formatter
+If you want to get data in you own specified format, you can apply it to method `calculateStats`. This method accept
+`callable` type to process data array before it will be returned.  
+This is how it looks inside the original code: `self::calculateStats([Formatter::class, 'formatValues']);` - this will
+execute method `formatValues` from `Formatter::class` class.
+
 ### Screenshots
 
 ![]()

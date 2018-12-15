@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benchmark\Performance\Output;
 
 use Twig\Loader\FilesystemLoader;
@@ -12,6 +14,13 @@ class Html implements OutputFormatterInterface
      */
     protected $template;
 
+    /**
+     * Html constructor.
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function __construct()
     {
         $loader = new FilesystemLoader(__DIR__ . '/../../template');
@@ -21,6 +30,9 @@ class Html implements OutputFormatterInterface
 
     /**
      * prepare view and display list of markers, their times and percentage values
+     *
+     * @param array $output
+     * @return string
      */
     public function formatOutput(array $output) : string
     {

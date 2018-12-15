@@ -269,8 +269,11 @@ class Timer
     /**
      * @param string $type
      * @return array|string
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public static function getFormattedOutput($type = 'raw')
+    public static function getFormattedOutput(string $type = 'raw')
     {
         switch ($type) {
             case 'shell':

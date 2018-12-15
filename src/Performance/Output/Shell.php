@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benchmark\Performance\Output;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\ArgvInput;
 
-class Shell  implements OutputFormatterInterface
+class Shell implements OutputFormatterInterface
 {
     /**
      * @var ConsoleOutput

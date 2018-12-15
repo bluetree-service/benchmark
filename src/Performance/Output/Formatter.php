@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benchmark\Performance\Output;
 
 class Formatter
 {
     /**
      * @param string $type
-     * @return string|mixed $ value
      * @param mixed $value
+     * @return mixed $value
      */
-    public function formatValues($value, string $type)
+    public static function formatValues($value, string $type)
     {
         switch ($type) {
             case 'total_rune_time':
@@ -33,10 +35,10 @@ class Formatter
     }
 
     /**
-     * @param mixed|string $value
+     * @param mixed $value
      * @return mixed
      */
-    public function rawValues($value)
+    public static function rawValues($value)
     {
         return $value;
     }
