@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.5.1.1 - 2018-12-17
+### Changed
+* README update
+
 ## 0.5.1.0 - 2018-12-15
 ### Added
 * Configuration for travis, scrutinizer & codeclimate

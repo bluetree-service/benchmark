@@ -9,8 +9,7 @@ BlueTree Service Benchmark
 2. To measure time from _start_ time, until some position use `::setMarker('some description')`, that will save time
 execution and memory usage from start, or previous marker to current position.
 3. After we set sime markers, use `::stop()` to halt benchmark.
-4. Use `::calculateStats()` to get information about execution time and memory usage. It returns complete html, so to
-show it just use `echo`.
+4. Use `::calculateStats()` to get information about execution time and memory usage.
 
 ```php
 \Benchmark\Performance\Timer::start();
@@ -24,9 +23,10 @@ sleep 5;
 \Benchmark\Performance\Timer::setMarker('another sleep');
 
 \Benchmark\Performance\Timer::stop();
-echo \Benchmark\Performance\Timer::calculateStats();
-
+var_dump(\Benchmark\Performance\Timer::calculateStats());
 ```
+
+5. If you want to get formatted output, look down for __Timer formatting output__ section.
 
 ### Timer advanced usage
 

@@ -5,7 +5,7 @@
     "description": "Class Benchmark libraries",
     "keywords": ["benchmark", "tracer", "debugger", "class library", "execution time"],
     "homepage": "https://github.com/bluetree-service/benchmark",
-    "version": "0.5.1.0",
+    "version": "0.5.1.1",
     "authors": [
         {
             "name": "Michał Adamiak",
