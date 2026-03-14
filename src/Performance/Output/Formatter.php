@@ -11,44 +11,32 @@ class Formatter
      * @param mixed $value
      * @return mixed $value
      */
-    public static function formatValues($value, string $type)
+    public static function formatValues(mixed $value, string $type): mixed
     {
-        switch ($type) {
-            case 'total_rune_time':
-                return self::formatTime($value);
-
-            case 'total_memory':
-                return '~' . ($value / 1024) . ' kB';
-
-            case 'percentage':
-                return number_format($value, 5) . ' %';
-
-            case 'memory':
-                return '~' . number_format($value, 3, ',', '') . ' kB';
-
-            case 'time':
-                return self::formatTime($value);
-
-            default:
-                return $value;
-        }
+        return match ($type) {
+            'time', 'total_rune_time' => self::formatTime($value),
+            'total_memory' => '~' . ($value / 1024) . ' kB',
+            'percentage' => \number_format($value, 5) . ' %',
+            'memory' => '~' . \number_format($value, 3, ',', '') . ' kB',
+            default => $value,
+        };
     }
 
     /**
      * @param mixed $value
      * @return mixed
      */
-    public static function rawValues($value)
+    public static function rawValues($value): mixed
     {
         return $value;
     }
 
     /**
-     * @param $value
+     * @param float $value
      * @return string
      */
     protected static function formatTime(float $value) : string
     {
-        return '~' . number_format($value * 1000, 4, '.', ' ') . ' ms';
+        return '~' . \number_format($value * 1000, 4, '.', ' ') . ' ms';
     }
 }

@@ -7,6 +7,7 @@ namespace Benchmark\Performance\Output;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class Shell implements OutputFormatterInterface
 {
@@ -20,9 +21,14 @@ class Shell implements OutputFormatterInterface
      */
     protected $style;
 
-    public function __construct()
+    public function __construct(protected bool $bufferedOutput = false)
     {
-        $this->output = new ConsoleOutput();
+        if ($bufferedOutput) {
+            $this->output = new BufferedOutput();
+        } else {
+            $this->output = new ConsoleOutput();
+        }
+
         $this->style = new SymfonyStyle(new ArgvInput, $this->output);
     }
 
@@ -64,6 +70,10 @@ class Shell implements OutputFormatterInterface
         }
 
         $this->style->newLine();
+        if ($this->bufferedOutput) {
+            return $this->output->fetch();
+
+        }
         return PHP_EOL;
     }
 }

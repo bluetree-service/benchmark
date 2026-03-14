@@ -3,3 +3,7 @@ composer.phar
 composer.lock
 vendor
 phpunit.phar
+.phpunit.result.cache
+build/*
+!build/.gitkeep
+tests/test_output.txt

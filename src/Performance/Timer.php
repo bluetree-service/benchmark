@@ -23,66 +23,67 @@ class Timer
      * information that marker time goes to group
      * @var array
      */
-    protected static $groupOn = [];
+    protected static array $groupOn = [];
 
     /**
      * contains array of times for group of markers
      * @var array
      */
-    protected static $group = [];
+    protected static array $group = [];
 
     /**
      * contains data about benchmark started memory usage
-     * @var integer
+     * @var int
      */
-    protected static $sessionMemoryStart = 0;
+    protected static int $sessionMemoryStart = 0;
 
     /**
      * contains data about started benchmark session time
-     * @var integer
+     * @var int|float
      */
-    protected static $sessionBenchmarkStart = 0;
+    protected static int|float $sessionBenchmarkStart = 0;
 
     /**
      * contains data about benchmark marker time
-     * @var integer
+     * @var int|float
      */
-    protected static $sessionBenchmarkMarker = 0;
+    protected static int|float $sessionBenchmarkMarker = 0;
 
     /**
      * contains data about benchmark markers
      * @var array
      */
-    protected static $sessionBenchmarkMarkers = [];
+    protected static array $sessionBenchmarkMarkers = [];
 
     /**
      * contains data about benchmark finish time
-     * @var integer
+     * @var int|float
      */
-    protected static $sessionBenchmarkFinish = 0;
+    protected static int|float $sessionBenchmarkFinish = 0;
 
     /**
      * contains information that benchmark is on or off
      * @var bool
      */
-    protected static $sessionBenchmarkOn = true;
+    protected static bool $sessionBenchmarkOn = true;
 
     /**
      * contains color information for group of markers
      * @var int
      */
-    protected static $backgroundColor = 0x202020;
+    protected static int $backgroundColor = 0x202020;
 
     /**
      * start benchmark, and set in internal session start time
      *
-     * @param boolean $enabled
+     * @param bool $enabled
      */
     public static function start(bool $enabled = true) : void
     {
         if ($enabled) {
-            $time = microtime(true);
-            self::$sessionMemoryStart = memory_get_usage(true);
+            self::$sessionBenchmarkOn = true;
+            $time = \microtime(true);
+            self::$sessionMemoryStart = \memory_get_usage(true);
             self::$sessionBenchmarkStart = $time;
             self::$sessionBenchmarkMarker = $time;
         } else {
@@ -98,11 +99,11 @@ class Timer
     public static function setMarker(string $name) : void
     {
         if (self::$sessionBenchmarkOn) {
-            $markerTime = microtime(true) - self::$sessionBenchmarkMarker;
+            $markerTime = \microtime(true) - self::$sessionBenchmarkMarker;
             $markerColor = self::$backgroundColor;
 
             if (!empty(self::$groupOn)) {
-                foreach (array_keys(self::$group) as $marker) {
+                foreach (\array_keys(self::$group) as $marker) {
                     if (!isset(self::$group[$marker]['time'])) {
                         $groupMarkerTime = $markerTime;
                     } else {
@@ -113,13 +114,13 @@ class Timer
                 }
             }
 
-            self::$sessionBenchmarkMarker = microtime(true);
-            self::$sessionBenchmarkMarkers[] = array(
+            self::$sessionBenchmarkMarker = \microtime(true);
+            self::$sessionBenchmarkMarkers[] = [
                 'marker_name' => $name,
                 'marker_time' => $markerTime,
-                'marker_memory' => memory_get_usage(true),
-                'marker_color' => dechex($markerColor)
-            );
+                'marker_memory' => \memory_get_usage(true),
+                'marker_color' => \dechex($markerColor)
+            ];
         }
     }
 
@@ -133,14 +134,14 @@ class Timer
         if (self::$sessionBenchmarkOn) {
             self::$backgroundColor += 0x101010;
 
-            self::$sessionBenchmarkMarkers[] = array(
+            self::$sessionBenchmarkMarkers[] = [
                 'marker_name' => $groupName . ' START',
                 'marker_time' => '',
                 'marker_memory' => '',
-                'marker_color' => dechex(self::$backgroundColor)
-            );
+                'marker_color' => \dechex(self::$backgroundColor)
+            ];
 
-            self::$group[$groupName]['memory'] = memory_get_usage(true);
+            self::$group[$groupName]['memory'] = \memory_get_usage(true);
             self::$groupOn[$groupName] = $groupName;
         }
     }
@@ -153,14 +154,14 @@ class Timer
     {
         if (self::$sessionBenchmarkOn) {
             unset(self::$groupOn[$groupName]);
-            $memoryUsage = memory_get_usage(true) - self::$group[$groupName]['memory'];
+            $memoryUsage = \memory_get_usage(true) - self::$group[$groupName]['memory'];
 
-            self::$sessionBenchmarkMarkers[] = array(
+            self::$sessionBenchmarkMarkers[] = [
                 'marker_name' => $groupName . ' END',
                 'marker_time' => self::$group[$groupName]['time'],
                 'marker_memory' => $memoryUsage,
-                'marker_color' => dechex(self::$backgroundColor)
-            );
+                'marker_color' => \dechex(self::$backgroundColor)
+            ];
 
             self::$backgroundColor -= 0x101010;
         }
@@ -172,7 +173,7 @@ class Timer
     public static function stop() : void
     {
         if (self::$sessionBenchmarkOn) {
-            self::$sessionBenchmarkFinish = microtime(true);
+            self::$sessionBenchmarkFinish = \microtime(true);
         }
     }
 
@@ -193,7 +194,7 @@ class Timer
             $benchmarkEndTime = self::$sessionBenchmarkFinish;
             $totalTime = $benchmarkEndTime - $benchmarkStartTime;
             $formatTime = $dataFormatter($totalTime, 'total_rune_time');
-            $memoryUsage = $dataFormatter(memory_get_usage(), 'total_memory');
+            $memoryUsage = $dataFormatter(\memory_get_usage(), 'total_memory');
 
             $aggregation = [
                 'total_rune_time' => $formatTime,
@@ -232,14 +233,15 @@ class Timer
      * @param array $stats
      * @param string $path
      * @throws \DomainException
+     * @throws \JsonException
      */
     public static function toFile(array $stats, string $path) : void
     {
-        if (!file_exists($path)) {
+        if (!\file_exists($path)) {
             throw new \DomainException('File don\'t exists: ' . $path);
         }
 
-        file_put_contents($path, json_encode($stats));
+        \file_put_contents($path, \json_encode($stats, JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -268,25 +270,16 @@ class Timer
 
     /**
      * @param string $type
+     * @param bool $buffetSehllOutput
      * @return array|string
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
-    public static function getFormattedOutput(string $type = 'raw')
+    public static function getFormattedOutput(string $type = 'raw', bool $buffetShellOutput = false): array|string
     {
-        switch ($type) {
-            case 'shell':
-                return (new Shell)->formatOutput(self::calculateStats([Formatter::class, 'formatValues']));
-
-            case 'html':
-                return (new Html)->formatOutput(self::calculateStats([Formatter::class, 'formatValues']));
-
-            case 'raw+':
-                return self::calculateStats([Formatter::class, 'formatValues']);
-
-            default:
-                return self::calculateStats();
-        }
+        return match ($type) {
+            'shell' => (new Shell($buffetShellOutput))->formatOutput(self::calculateStats([Formatter::class, 'formatValues'])),
+            'html' => (new Html())->formatOutput(self::calculateStats([Formatter::class, 'formatValues'])),
+            'raw+' => self::calculateStats([Formatter::class, 'formatValues']),
+            default => self::calculateStats(),
+        };
     }
 }
